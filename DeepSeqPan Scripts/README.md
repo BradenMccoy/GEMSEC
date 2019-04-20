@@ -1,6 +1,6 @@
 # Scripts
 
-This folder contains code implementation of DeepSeqPan.
+This folder contains code implementation of [DeepSeqPan](https://github.com/pcpLiu/DeepSeqPan).
 Also it has script to load model and do prediction.
 
 - model.py: Defines the network structure of DeepSeqPan

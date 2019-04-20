@@ -1,2 +1,2 @@
-# Documentation of the code
+# Documentation
 ### Braden McCoy

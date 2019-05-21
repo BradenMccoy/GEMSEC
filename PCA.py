@@ -10,12 +10,12 @@ property_continuous = pd.red_csv('continuous_properties.csv', delimiter=',')
 
 #read csvs into arrays
 
-data_categorical = pd.DataFrame(columns=[property_categorical.], index=?) #which columns?
+data_categorical = pd.DataFrame(columns=[property_categorical.columns], index=property_categorical.index) #which columns?
 
 print(data_categorical.head())
 print(data_categorical.shape())
 
-scaled_data = preprocessing.minmax_scale(data_categorical) #transpose if the data is in columns
+scaled_data = preprocessing.minmax_scale(data_categorical.T) #transpose if the data is in columns
 
 pca = PCA()
 pca.fit(scaled_data)
@@ -29,6 +29,7 @@ plt.ylabel('Percentage of Explained Variance')
 plt.xlabel('Principal Component')
 plt.title('Categorical Scree plot')
 plt.show()
+
 #PCA graphing
 #pca_df = pd.DataFrame(pca_data,index=[], columns = labels)
 #plt.title('Categorical PCA')

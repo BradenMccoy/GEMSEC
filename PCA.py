@@ -3,33 +3,45 @@ import pandas as pd
 import numpy as np
 from sklearn.decomposition import PCA
 from sklearn import preprocessing
-import matplotlib.pyplot as plot
+import matplotlib.pyplot as plt
 
 property_categorical = pd.read_csv('categorical_properties.csv', delimiter=',')
-property_continuous = pd.red_csv('continuous_properties.csv', delimiter=',')
+property_continuous = pd.read_csv('continuous_properties.csv', delimiter=',')
 
-#read csvs into arrays
+property_categorical.set_index('Unnamed: 0',inplace=True)
+property_continuous.set_index('Unnamed: 0',inplace=True)
 
-data_categorical = pd.DataFrame(columns=[property_categorical.columns], index=property_categorical.index) #which columns?
+#print(property_categorical.head())
+print(property_continuous.head())
 
-print(data_categorical.head())
-print(data_categorical.shape())
+scaled_data_categorical = preprocessing.minmax_scale(property_categorical)
+scaled_data_continuous = preprocessing.scale(property_continuous)
+pca_categorical = PCA()
+pca_continuous = PCA()
+pca_continuous.fit(scaled_data_continuous)
+pca_categorical.fit(scaled_data_categorical)
+pca_data_continuous = pca_continuous.transform(scaled_data_continuous)
+pca_data_categorical = pca_categorical.transform(scaled_data_categorical)
 
-scaled_data = preprocessing.minmax_scale(data_categorical.T) #transpose if the data is in columns
+# Continuous
+per_var = np.round(pca_continuous.explained_variance_ratio_*100, decimals = 1)
+labels = ['PC' + str(x) for x in range(1, len(per_var) + 1)]
+plt.bar(x = range(1, len(per_var) + 1), height = per_var, tick_label = labels)
+plt.ylabel('Percentage of Explained Variance')
+plt.xlabel('Principal Component')
+plt.title('Continuous Scree plot')
+plt.show()
+print(pca_data_continuous[:,0]) #next step is to take each PC, and sort it ascending/descending order and convert that sorted list to its corresponding amino acid letter order.
 
-pca = PCA()
-pca.fit(scaled_data)
-pca_data = pca.transform(scaled_data)
-
-# bar graphing
-per_var = np.round(pca.explained_variance_ratio_*100, decimals = 1)
+# Categorical
+per_var = np.round(pca_categorical.explained_variance_ratio_*100, decimals = 1)
 labels = ['PC' + str(x) for x in range(1, len(per_var) + 1)]
 plt.bar(x = range(1, len(per_var) + 1), height = per_var, tick_label = labels)
 plt.ylabel('Percentage of Explained Variance')
 plt.xlabel('Principal Component')
 plt.title('Categorical Scree plot')
 plt.show()
-
+print(pca_data_categorical[:,0]) 
 #PCA graphing
 #pca_df = pd.DataFrame(pca_data,index=[], columns = labels)
 #plt.title('Categorical PCA')

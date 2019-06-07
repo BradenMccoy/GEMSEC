@@ -11,6 +11,7 @@ import numpy as np
 import pandas as pd
 from time import time
 import matplotlib.pyplot as plt
+
 def peptide1hotter(seq):
     aa = "ARNDCQEGHILKMFPSTWYV"
     c2i = dict((c,i) for i,c in enumerate(aa))
@@ -21,6 +22,19 @@ def peptide1hotter(seq):
         letter[value] = 1
         onehot_encoded.append(letter)
     return(onehot_encoded)
+
+def one_hot_encoding(x, allowed_set):
+   if x not in allowed_set:
+       raise Exception(
+           'Input {0} not in allowed 1-hot set {1}'.format(x, allowed_set))
+   return list(map(lambda s: x == s, allowed_set))
+
+
+def one_hot_encoding_unk(x, allowed_set):
+   if x not in allowed_set:
+       x = allowed_set[-1]
+   return list(map(lambda s: x == s, allowed_set))
+
 allonehotter = np.vectorize(peptide1hotter)
 simmat = pd.read_csv('M4MoS2Training.csv',header=None).values
 s2ngs=pd.read_csv('set2_sorted.csv')

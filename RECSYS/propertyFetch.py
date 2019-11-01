@@ -9,7 +9,8 @@ import torch.optim as opt
 
 # Returns a pandas dataframe with the property values of the given sequence including repeats
 def propertyFetch(sequence):
-    properties = pd.read_csv("properties.csv", delimiter=",")
+    properties = pd.read_csv("continuous_properties.csv", delimiter=",")
+    properties = properties.set_index('Unnamed: 0').T
     df = pd.DataFrame()
     sequence = sequence.upper()
     j = 2
@@ -30,17 +31,18 @@ test=ngs_test['center_of_mass']
 
 k=1 # aim of the project is to find the best k, maybe k1 and k2, so that we can group locations in the sequence and their properties.
 l=12
-n=527 #try continuous and categorical separately. n will change similarly
+n=489 #try continuous and categorical separately. n will change similarly 489 continuous, 38 categorical, 527 total
 U = var(torch.randn(k,l).cuda(),requires_grad=True)
 V = var(torch.randn(n,k).cuda(),requires_grad=True)
 W1 = var(torch.randn(k**2,32).cuda(),requires_grad=True)
 W2 = var(torch.randn(32,8).cuda(),requires_grad=True)
 W3 = var(torch.randn(8,1).cuda(),requires_grad=True)
 loss = torch.nn.MSELoss() # SmoothL1Loss is the other option
-lr = 1e-1 # main thing to optimize on full dataset
-optimizer = opt.SGD([U,V,W1,W2,W3],lr=lr,momentum=0.75,weight_decay=0.1) # MAYBE try adam instead of SGD. optional. maybe not necessary
+lr = 1e-4 # main thing to optimize on full dataset
+optimizer = opt.SGD([U,V,W1,W2,W3],lr=lr,momentum=0.80,weight_decay=0.1) # adam is the other optimizer choice here, no signifigant change seen so far
+# momentum=0.75, momentum value for SGD
 epoch = 0
-max_epochs=100 # can change
+max_epochs=5 # can change
 overall_loss=[]
 while epoch >= 0:
     it = 0
@@ -62,16 +64,14 @@ while epoch >= 0:
         print(epoch,it,error.item())
         it += 1
 
-        if it >len(train):
+        if it > 2000: #len(train):
             break
     overall_loss.append(np.mean(epochloss))
     epoch+=1
 
-    if epoch > max_epochs:
+    if epoch >= max_epochs:
         break
 
-plt.scatter(np.linspace(0,max_epochs,max_epochs+1),overall_loss)
+plt.scatter(np.linspace(0,max_epochs,max_epochs),overall_loss)
 plt.show()
 plt.close
-
-

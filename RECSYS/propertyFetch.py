@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from torch.nn import functional as fs
 from torch.autograd import Variable as var
 import torch.optim as opt
+import pickle
 
 
 # Returns a pandas dataframe with the property values of the given sequence including repeats
@@ -42,7 +43,7 @@ lr = 1e-4 # main thing to optimize on full dataset
 optimizer = opt.SGD([U,V,W1,W2,W3],lr=lr,momentum=0.80,weight_decay=0.1) # adam is the other optimizer choice here, no signifigant change seen so far
 # momentum=0.75, momentum value for SGD
 epoch = 0
-max_epochs=5 # can change
+max_epochs=100 # can change
 overall_loss=[]
 while epoch >= 0:
     it = 0
@@ -64,13 +65,42 @@ while epoch >= 0:
         print(epoch,it,error.item())
         it += 1
 
-        if it > 2000: #len(train):
+        if it > len(train):
             break
     overall_loss.append(np.mean(epochloss))
     epoch+=1
 
     if epoch >= max_epochs:
         break
+
+# saves U, V, and weights
+fU = open("U","wb")
+pickle.dump(U, fU)
+fU.close()
+
+fV = open("V","wb")
+pickle.dump(V, fV)
+fV.close()
+
+fW1 = open("W1","wb")
+pickle.dump(W1, fW1)
+fW1.close()
+
+fW2 = open("W2","wb")
+pickle.dump(W2, fW2)
+fW2.close()
+
+fW3 = open("fW3","wb")
+pickle.dump(W3, fW3)
+fW3.close()
+
+print("-------------FINAL VALUES-------------")
+print("\n")
+print(U)
+print(V)
+print(W1)
+print(W2)
+print(W3)
 
 plt.scatter(np.linspace(0,max_epochs,max_epochs),overall_loss)
 plt.show()

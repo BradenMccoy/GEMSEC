@@ -39,11 +39,11 @@ W1 = var(torch.randn(k**2,32).cuda(),requires_grad=True)
 W2 = var(torch.randn(32,8).cuda(),requires_grad=True)
 W3 = var(torch.randn(8,1).cuda(),requires_grad=True)
 loss = torch.nn.MSELoss() # SmoothL1Loss is the other option
-lr = 1e-4 # main thing to optimize on full dataset
+lr = 1e-3 # main thing to optimize on full dataset
 optimizer = opt.SGD([U,V,W1,W2,W3],lr=lr,momentum=0.80,weight_decay=0.1) # adam is the other optimizer choice here, no signifigant change seen so far
 # momentum=0.75, momentum value for SGD
 epoch = 0
-max_epochs=100 # can change
+max_epochs=10 # can change
 overall_loss=[]
 while epoch >= 0:
     it = 0
@@ -65,7 +65,7 @@ while epoch >= 0:
         print(epoch,it,error.item())
         it += 1
 
-        if it > len(train):
+        if it > 2000: #len(train):
             break
     overall_loss.append(np.mean(epochloss))
     epoch+=1
@@ -90,7 +90,7 @@ fW2 = open("W2","wb")
 pickle.dump(W2, fW2)
 fW2.close()
 
-fW3 = open("fW3","wb")
+fW3 = open("W3","wb")
 pickle.dump(W3, fW3)
 fW3.close()
 
